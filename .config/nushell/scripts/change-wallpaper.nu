@@ -16,7 +16,7 @@ def set-wallpaper [image: string] {
 }
 
 def main [
-    --image (-i): string
+    --image (-i): string,
     --random
 ] {
     if (($image | is-empty) and not $random) {
