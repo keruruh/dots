@@ -34,8 +34,8 @@ def main [
     let native_pkgs = pacman --query --quiet --explicit --native | lines
     let foreign_pkgs = pacman --query --quiet --explicit --foreign | lines
 
-    let file_native  = $"($nu.home-path)/packages-native.txt"
-    let file_foreign = $"($nu.home-path)/packages-foreign.txt"
+    let file_native  = $nu.home-path | path join "packages-native.txt"
+    let file_foreign = $nu.home-path | path join "packages-foreign.txt"
 
     if $mode == "native" or $mode == "all" {
         write-file $file_native "native" $native_pkgs

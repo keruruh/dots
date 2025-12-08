@@ -28,8 +28,8 @@ $env.config.filesize = {
     precision: 2
 }
 
-def ll [...args: string] {
-    ls --all ...$args | sort-by type name
+def ll [args?: string] {
+    ls --all ($args | default "./") | sort-by type name
 }
 
 def --env y [...args: string] {
@@ -46,12 +46,11 @@ def --env y [...args: string] {
 }
 
 alias yh = y $nu.home-path
-alias yc = y $"($nu.home-path)/.config/"
-alias ys = y $"($nu.home-path)/.config/nushell/scripts/"
+alias yc = y $nu.home-path | path join ".config"
+alias ys = y $nu.home-path | path join ".config/nushell/scripts"
 
 alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu
-    | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")
+starship init nu | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")

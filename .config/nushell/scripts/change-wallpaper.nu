@@ -1,12 +1,12 @@
 #! /usr/bin/env nu
 
 def set-wallpaper [image: string] {
-    let papes_dir = $"($nu.home-path)/Pictures/Wallpapers"
+    let papes_dir = $nu.home-path | path join "Pictures/Wallpapers"
 
     let extension = $image | path parse | get extension
-    let current = $"($papes_dir)/current.($extension)"
+    let current = $papes_dir | path join $"current.($extension)"
 
-    rm --recursive --force $"($nu.home-path)/.cache/hellwal/cache/"
+    rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
     cp $image $current
 
     feh --no-fehbg --bg-scale $current
@@ -26,7 +26,7 @@ def main [
 
     if ($random) {
         loop {
-            let wallpapers = ls $"($nu.home-path)/Pictures/Wallpapers/"
+            let wallpapers = ls ($nu.home-path | path join "Pictures/Wallpapers")
 
             let random_wallpaper = $wallpapers
                 | where $it.name !~ current
