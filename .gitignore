@@ -3,11 +3,11 @@
 !LICENSE.md
 !README.md
 
-!.x*
-!.X*
+!.[xX]*
 !.git*
 
-!packages-*
+!packages-foreign.txt
+!packages-native.txt
 
 !.config/
 !.config/**
@@ -15,5 +15,6 @@
 .config/micro/buffers
 .config/micro/backups
 .config/pulse
+.config/dconf
 
 history.txt
