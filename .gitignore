@@ -1,0 +1,17 @@
+*
+
+!LICENSE.md
+!README.md
+
+!.x*
+!.X*
+!.git*
+
+!.config/
+!.config/**
+
+.config/micro/buffers
+.config/micro/backups
+.config/pulse
+
+history.txt

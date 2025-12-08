@@ -1,0 +1,11 @@
+[user]
+    username = keruruh
+    name = Kerman Huici
+    email = huicikerman@gmail.com
+
+[core]
+    editor = nvim
+    whitespace = -indent-with-non-tab,fix,trailing-space,cr-at-eol
+
+[init]
+    defaultBranch = master
