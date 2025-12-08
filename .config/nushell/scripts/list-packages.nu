@@ -1,4 +1,4 @@
-#!/usr/bin/env nu
+#! /usr/bin/env nu
 
 def write-file [
     file: string
