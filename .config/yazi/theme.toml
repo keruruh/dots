@@ -1,0 +1,3 @@
+[mgr]
+preview_hovered = { underline = false }
+border_symbol = " "

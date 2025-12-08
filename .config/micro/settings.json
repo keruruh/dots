@@ -1,0 +1,16 @@
+{
+    "autosave": 1,
+    "autosu": true,
+    "colorcolumn": 80,
+    "colorscheme": "simple",
+    "hlsearch": true,
+    "hltaberrors": true,
+    "hltrailingws": true,
+    "matchbracestyle": "highlight",
+    "rmtrailingws": true,
+    "savecursor": true,
+    "savehistory": false,
+    "saveundo": true,
+    "showchars": "tab=>",
+    "tabstospaces": true,
+}

@@ -1,0 +1,14 @@
+configuration {
+    modes: "window,drun,run,ssh";
+    terminal: "kitty";
+    show-icons: true;
+    icon-theme: "Papirus";
+    fixed-num-lines: true;
+
+    timeout {
+        action: "kb-cancel";
+        delay: 0;
+    }
+}
+
+@import "~/.cache/hellwal/rofi.rasi"
