@@ -1,16 +1,14 @@
 #! /usr/bin/env nu
 
 def set-wallpaper [image: string] {
-    let papes_dir = $nu.home-path | path join "Pictures/Wallpapers"
-
     let extension = $image | path parse | get extension
-    let current = $papes_dir | path join $"current.($extension)"
+    let current = $nu.home-path | path join ".papes" $"current.($extension)"
 
     rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
     cp $image $current
 
     feh --no-fehbg --bg-scale $current
-    hellwal --quiet --image $current
+    hellwal --quiet --bright-offset 0.75 --image $current
 
     i3-msg --quiet restart
 }
@@ -20,29 +18,33 @@ def main [
     --random
 ] {
     if (($image | is-empty) and not $random) {
-        print "Rerun with --help to see available flags."
+        print "Rerun with --help to see the available flags."
         return
     }
 
     if ($random) {
         loop {
-            let wallpapers = ls ($nu.home-path | path join "Pictures/Wallpapers")
-
-            let random_wallpaper = $wallpapers
-                | where $it.name !~ current
+            let wallpapers = glob --no-dir ($nu.home-path | path join ".papes/**")
+                | path parse
+                | where $it.stem !~ ".keep"
                 | shuffle
-                | first
 
-            let current_wallpaper = $wallpapers
-                | where $it.name =~ current
-                | first
+            let random_wallpaper = $wallpapers | where $it.stem !~ "current" | first
+            let current_wallpaper = $wallpapers | where $it.stem =~ "current" | first
 
-            let random_hash = open ($random_wallpaper | get name) | hash md5
-            let current_hash = open ($current_wallpaper | get name) | hash md5
+            if ($current_wallpaper | is-empty) {
+                print "Couldn't detect the current wallpaper."
+                print "Manually set a wallpaper before using --random."
 
-            if ($random_hash != $current_hash) {
-                set-wallpaper ($random_wallpaper | get name)
-                break
+                return
+            } else {
+                let random_hash = ($random_wallpaper | path join) | hash md5
+                let current_hash = ($current_wallpaper | path join) | hash md5
+
+                if $random_hash != $current_hash {
+                    set-wallpaper ($random_wallpaper | get name)
+                    break
+                }
             }
         }
 
