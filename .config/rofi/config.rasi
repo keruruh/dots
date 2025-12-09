@@ -1,9 +1,8 @@
 configuration {
-    modes: "window,drun,run,ssh";
+    modes: "window,drun,ssh";
     terminal: "kitty";
     show-icons: true;
     icon-theme: "Papirus";
-    fixed-num-lines: true;
 
     timeout {
         action: "kb-cancel";

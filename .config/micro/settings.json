@@ -10,6 +10,5 @@
     "savecursor": true,
     "savehistory": false,
     "saveundo": true,
-    "showchars": "tab=>",
-    "tabstospaces": true,
+    "tabstospaces": true
 }

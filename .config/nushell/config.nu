@@ -1,3 +1,5 @@
+#! /usr/bin/env nu
+
 $env.config.history = {
     file_format: plaintext
     max_size: 5_000_000
@@ -7,7 +9,7 @@ $env.config.history = {
 $env.config.show_banner = false
 
 $env.config.edit_mode = "vi"
-$env.config.buffer_editor = "nvim"
+$env.config.buffer_editor = $env.EDITOR
 
 $env.config.table = {
     mode: "light"
@@ -28,6 +30,10 @@ $env.config.filesize = {
     precision: 2
 }
 
+#
+# CUSTOM FUNCTIONS
+#
+
 def ll [args?: string] {
     ls --all ($args | default "./") | sort-by type name
 }
@@ -42,8 +48,12 @@ def --env y [...args: string] {
         cd $cwd
     }
 
-    rm -fp $tmp
+    rm --force --permanent $tmp
 }
+
+#
+# CUSTOM ALIASES
+#
 
 alias yh = y $nu.home-path
 alias yc = y $nu.home-path | path join ".config"
@@ -51,6 +61,10 @@ alias ys = y $nu.home-path | path join ".config/nushell/scripts"
 
 alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps
+
+#
+# MISC STUFF
+#
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 starship init nu | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")

@@ -2,7 +2,7 @@
 ratio = [2, 3, 3]
 
 sort_by = "extension"
-sort_sensitive = true
+sort_sensitive = false
 sort_dir_first = true
 
 show_hidden = true
@@ -13,14 +13,18 @@ wrap = "no"
 tab_size = 4
 
 [opener]
-play = [{ run = 'mpv "$@"', orphan = true }]
-edit = [{ run = '$EDITOR "$@"', block = true }]
-open = [{ run = 'xdg-open "$@"', dec = "Open" }]
+play = [{ run = "mpv '$@'", orphan = true }]
+edit = [{ run = "$EDITOR '$@'", block = true }]
+open = [{ run = "xdg-open '$@'", desc = "Open" }]
 
 [open]
 rules = [
     { mime = "text/*", use = "edit" },
     { mime = "video/*", use = "play" },
+
+	{ name = "*.html", use = [ "open", "edit" ] },
+
+    { name = "*", use = "edit" },
 ]
 
 [input]

@@ -1,3 +1,5 @@
+#! /usr/bin/env nu
+
 $env.EDITOR = "micro"
 $env.BROWSER = "firefox"
 
