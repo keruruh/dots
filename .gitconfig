@@ -5,7 +5,7 @@
 
 [core]
     editor = nvim
-    whitespace = trailing-space,indent-with-non-tab,tab-in-indent,cr-at-eol
+    whitespace = trailing-space,indent-with-non-tab,cr-at-eol
 
 [init]
     defaultBranch = master

@@ -13,16 +13,16 @@ wrap = "no"
 tab_size = 4
 
 [opener]
-play = [{ run = "mpv '$@'", orphan = true }]
-edit = [{ run = "$EDITOR '$@'", block = true }]
-open = [{ run = "xdg-open '$@'", desc = "Open" }]
+play = [{ run = 'mpv "$@"', orphan = true }]
+edit = [{ run = '$EDITOR "$@"', block = true }]
+open = [{ run = 'xdg-open "$@"', desc = "Open" }]
 
 [open]
 rules = [
     { mime = "text/*", use = "edit" },
     { mime = "video/*", use = "play" },
 
-	{ name = "*.html", use = [ "open", "edit" ] },
+    { name = "*.html", use = [ "open", "edit" ] },
 
     { name = "*", use = "edit" },
 ]

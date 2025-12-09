@@ -56,8 +56,8 @@ def --env y [...args: string] {
 #
 
 alias yh = y $nu.home-path
-alias yc = y $nu.home-path | path join ".config"
-alias ys = y $nu.home-path | path join ".config/nushell/scripts"
+alias yc = y ($nu.home-path | path join ".config")
+alias ys = y ($nu.home-path | path join ".config/nushell/scripts")
 
 alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps

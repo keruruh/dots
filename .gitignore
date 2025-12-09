@@ -9,6 +9,9 @@
 !packages-foreign.txt
 !packages-native.txt
 
+!.papes/
+!.papes/**
+
 !.config/
 !.config/**
 
