@@ -7,10 +7,19 @@ def set-wallpaper [image: string] {
     rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
     cp $image $current
 
+    # Set wallpaper.
     feh --no-fehbg --bg-scale $current
-    hellwal --quiet --bright-offset 0.75 --image $current
 
+    # Generate color pallette.
+    hellwal --quiet --bright-offset 1.0 --image $current
+
+    # Restart i3.
     i3-msg --quiet restart
+
+    # Restart kitty.
+    ps | where name =~ "kitty" | each { |k|
+        kill --signal 10 $k.pid
+    }
 }
 
 def main [

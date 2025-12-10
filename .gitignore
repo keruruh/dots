@@ -1,32 +1,53 @@
+# Ignore everything.
 *
+
+##############
+# HOME STUFF #
+##############
 
 !LICENSE.md
 !README.md
 
-!.[xX]*
 !.git*
+!.[xX]*
 
 !packages-foreign.txt
 !packages-native.txt
 
-!.papes/
-!.papes/**
-
-current.*
+###########
+# CONFIGS #
+###########
 
 !.config/
 !.config/**
 
-.config/micro/backups
-.config/micro/buffers
 .config/dconf
 .config/keepassxc
 .config/libfm
 .config/pcmanfm
 .config/pulse
 
+.config/micro/backups
+.config/micro/buffers
+
 .config/gtk-*
 .config/[qQ]t*
 
 history.txt
 pavucontrol.ini
+
+##############
+# WALLPAPERS #
+##############
+
+!.papes/
+!.papes/**
+
+current.*
+
+###########
+# SCRIPTS #
+###########
+
+!.scripts/
+!.scripts/**
