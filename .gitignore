@@ -25,6 +25,8 @@ current.*
 .config/pcmanfm
 .config/pulse
 
+.config/gtk-*
+.config/[qQ]t*
+
 history.txt
 pavucontrol.ini
-Qt*
