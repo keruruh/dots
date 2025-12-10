@@ -31,7 +31,7 @@ $env.config.filesize = {
 }
 
 #
-# CUSTOM FUNCTIONS
+# Custom Functions
 #
 
 def ll [args?: string] {
@@ -52,7 +52,7 @@ def --env y [...args: string] {
 }
 
 #
-# CUSTOM ALIASES
+# Custom Aliases
 #
 
 alias yh = y $nu.home-path
@@ -63,8 +63,9 @@ alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps
 
 #
-# MISC STUFF
+# Misc. Stuff
 #
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 starship init nu | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")
+

@@ -42,7 +42,7 @@ def main [
                 let current_hash = ($current_wallpaper | path join) | hash md5
 
                 if $random_hash != $current_hash {
-                    set-wallpaper ($random_wallpaper | get name)
+                    set-wallpaper ($random_wallpaper | path join)
                     break
                 }
             }
