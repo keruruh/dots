@@ -18,6 +18,9 @@
 # CONFIGS #
 ###########
 
+!.etc/
+!.etc/**
+
 !.config/
 !.config/**
 
