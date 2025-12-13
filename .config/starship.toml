@@ -1,5 +1,29 @@
 "$schema" = "https://starship.rs/config-schema.json"
 
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_status\
+$package\
+$c\
+$cmake\
+$cpp\
+$java\
+$lua\
+$python\
+$rust\
+$zig\
+$sudo\
+$jobs
+$character"""
+
+right_format = "$cmd_duration"
+
+add_newline = false
+
 [character]
 success_symbol = "[>](bold green)"
 error_symbol = "[x](bold red)"
@@ -13,10 +37,29 @@ vimcmd_replace_one_symbol = "[<](bold purple)"
 show_always = true
 
 [hostname]
-ssh_symbol = "ssh "
+ssh_only = true
+ssh_symbol = " (ssh) "
 
 [directory]
 truncation_length = 0
+read_only = " (read) "
+
+[jobs]
+symbol = "+ "
+
+[package]
+symbol = "pkg "
+
+[sudo]
+symbol = "sudo "
+
+[cmd_duration]
+min_time = 1
+show_milliseconds = true
+
+[git_branch]
+symbol = "git "
+truncation_symbol = "..."
 
 [git_commit]
 tag_symbol = " tag "
@@ -28,24 +71,14 @@ diverged = "<>"
 renamed = "r"
 deleted = "x"
 
-[git_branch]
-symbol = "git "
-truncation_symbol = "..."
-
-[package]
-symbol = "pkg "
-
-[sudo]
-symbol = "sudo "
-
 [c]
 symbol = "c "
 
-[cpp]
-symbol = "c++ "
-
 [cmake]
 symbol = "cmake "
+
+[cpp]
+symbol = "c++ "
 
 [java]
 symbol = "java "

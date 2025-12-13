@@ -1,10 +1,6 @@
 # Ignore everything.
 *
 
-##############
-# HOME STUFF #
-##############
-
 !LICENSE.md
 !README.md
 
@@ -13,10 +9,6 @@
 
 !packages-foreign.txt
 !packages-native.txt
-
-###########
-# CONFIGS #
-###########
 
 !.etc/
 !.etc/**
@@ -36,21 +28,14 @@
 .config/gtk-*
 .config/[qQ]t*
 
-history.txt
-pavucontrol.ini
-
-##############
-# WALLPAPERS #
-##############
+.config/**/history.txt
+.config/**/pavucontrol.ini
+.config/**/mimeapps.list
 
 !.papes/
 !.papes/**
 
 current.*
-
-###########
-# SCRIPTS #
-###########
 
 !.scripts/
 !.scripts/**

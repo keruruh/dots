@@ -6,9 +6,11 @@
     "hltaberrors": true,
     "hltrailingws": true,
     "matchbracestyle": "highlight",
+    "mkparents": true,
     "rmtrailingws": true,
     "savecursor": true,
     "savehistory": false,
     "saveundo": true,
+    "statusformatr": "",
     "tabstospaces": true
 }

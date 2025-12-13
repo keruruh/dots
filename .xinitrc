@@ -1,6 +1,6 @@
 #! /usr/bin/env nu
 
-xrdb ~/.Xresources
+xset r rate 200 30
 
 source $nu.config-path
 source $nu.env-path

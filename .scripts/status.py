@@ -11,25 +11,23 @@ import socket
 import subprocess
 import time
 
-# Interval (in seconds) to wait for updates of the "slow" blocks.
-SLOW_UPDATE_INTERVAL = 60
+# Interval (in seconds) to wait for updates of blocks that take longer to process.
+# This is useful for "slow" blocks where frequent updates might not be necessary.
+SLOW_UPDATE_INTERVAL = 5.0
 
-# The amount of pixels to leave blank after the block.
-# In the middle of this gap, a separator symbol will be drawn.
+# The number of pixels to leave as a gap after a block.
+# A separator symbol will be drawn in the middle of this gap.
 SEPARATOR_BLOCK_WIDTH = 25
 
-# Set a custom locale for the datetime now format.
-# Note that the locale must be installed in the system beforehand
+# Specifies the locale used for formatting the current date and time.
+# Note that the specified locale must be installed on the system beforehand for it to work.
 DATETIME_LOCALE = "ja_JP"
 
-# Custom strftime(3) format (supports pango).
+# Custom format for displaying the current date and time using strftime(3).
+# Supports pango formatting to style the output.
 DATETIME_FORMAT = "%F (<b>%a</b>) %T"
 
-#########
-# UTILS #
-#########
-
-def _get_wallpaper_color() -> str:
+def get_wallpaper_color() -> str:
     wallpapers = glob.glob(os.path.expanduser("~/.papes/current.*"))
     default_color = "#ffffff"
 
@@ -39,26 +37,35 @@ def _get_wallpaper_color() -> str:
     wallpaper = wallpapers[0]
 
     try:
-        out = subprocess.check_output(["hellwal", "--json", "--image", wallpaper], text=True)
+        out = subprocess.check_output([
+            "hellwal",
+            "--quiet",
+            "--json",
+            "--skip-term-colors",
+            "--no-cache",
+            "--image",
+            wallpaper
+        ], text=True)
+
         data = json.loads(out)
 
         return data.get("colors", {}).get("color10", "#ffffff")
     except Exception:
         return default_color
 
-def _wrap_name(title: str, text: str) -> str:
-    return f'<b><span foreground="{_get_wallpaper_color()}">{title}</span></b>: {text}'
+def wrap_name(title: str, text: str) -> str:
+    return f'<b><span foreground="{get_wallpaper_color()}">{title}</span></b>: {text}'
 
-def _format_bytes(size: int) -> str:
+def format_bytes(size: int) -> str:
     return f"{(size / (1024 ** 3)):.2f} GiB"
 
-##############
-# CONNECTION #
-##############
-
-def _get_iw_info(interface: str) -> dict:
+def get_iw_info(interface: str) -> dict:
     try:
-        out = subprocess.check_output(["iw", interface, "link"], stderr=subprocess.DEVNULL, text=True)
+        out = subprocess.check_output([
+            "iw",
+            interface,
+            "link"
+        ], stderr=subprocess.DEVNULL, text=True)
     except Exception:
         return {
             "ssid": None,
@@ -89,9 +96,16 @@ def _get_iw_info(interface: str) -> dict:
         "bitrate": bitrate
     }
 
-def _get_ping_latency() -> str:
+def get_ping_latency() -> str:
     try:
-        out = subprocess.check_output(["ping", "-c", "1", "-w", "1", "8.8.8.8"], stderr=subprocess.DEVNULL, text=True)
+        out = subprocess.check_output([
+            "ping",
+            "-c",
+            "1",
+            "-w",
+            "1",
+            "8.8.8.8"
+        ], stderr=subprocess.DEVNULL, text=True)
 
         if m := re.search(r"time=([\d.]+) ms", out):
             return f"{float(m.group(1)):.1f} ms"
@@ -114,7 +128,7 @@ def pretty_wifi() -> dict:
     if wifi is None or not stats[wifi].isup:
         return {
             "name": "id_wifi",
-            "full_text": _wrap_name("WLS", "Disconnected")
+            "full_text": wrap_name("WLS", "Disconnected")
         }
 
     ipv4 = "No IP"
@@ -124,15 +138,15 @@ def pretty_wifi() -> dict:
             ipv4 = a.address
             break
 
-    info = _get_iw_info(wifi)
-    ping = _get_ping_latency()
+    info = get_iw_info(wifi)
+    ping = get_ping_latency()
 
     ssid = info["ssid"] or "Unknown"
     signal = f"{info['signal']}%" if info["signal"] is not None else "N/A"
 
     return {
         "name": "id_wifi",
-        "full_text": _wrap_name("WLS", f"{ssid} ({ipv4}) {signal} ping {ping}")
+        "full_text": wrap_name("WLS", f"{ssid} ({ipv4}) {signal} ping {ping}")
     }
 
 def pretty_ethernet() -> dict:
@@ -149,7 +163,7 @@ def pretty_ethernet() -> dict:
     if eth is None or not stats[eth].isup:
         return {
             "name": "id_ethernet",
-            "full_text": _wrap_name("ETH", "Disconnected")
+            "full_text": wrap_name("ETH", "Disconnected")
         }
 
     ipv4 = "No IP"
@@ -161,12 +175,8 @@ def pretty_ethernet() -> dict:
 
     return {
         "name": "id_ethernet",
-        "full_text": _wrap_name("ETH", f"{eth} ({ipv4})")
+        "full_text": wrap_name("ETH", f"{eth} ({ipv4})")
     }
-
-#######
-# CPU #
-#######
 
 def pretty_cpu() -> dict:
     cpu_percent = psutil.cpu_percent()
@@ -183,28 +193,20 @@ def pretty_cpu() -> dict:
 
     return {
         "name": "id_cpu",
-        "full_text": _wrap_name("CPU", f"{cpu_percent:.2f}% at {temp_text}")
+        "full_text": wrap_name("CPU", f"{cpu_percent:.2f}% at {temp_text}")
     }
-
-##########
-# MEMORY #
-##########
 
 def pretty_memory() -> str:
     memory = psutil.virtual_memory()
 
-    memory_used = _format_bytes(memory.used)
-    memory_total = _format_bytes(memory.total)
+    memory_used = format_bytes(memory.used)
+    memory_total = format_bytes(memory.total)
     memory_percent = f"{(memory.used / memory.total * 100):.2f}"
 
     return {
         "name": "id_memory",
-        "full_text": _wrap_name("RAM", f"{memory_used} of {memory_total} ({memory_percent}%)")
+        "full_text": wrap_name("RAM", f"{memory_used} of {memory_total} ({memory_percent}%)")
     }
-
-##########
-# UPTIME #
-##########
 
 def pretty_uptime() -> str:
     seconds = int(time.time() - psutil.boot_time())
@@ -223,12 +225,8 @@ def pretty_uptime() -> str:
 
     return {
         "name": "id_uptime",
-        "full_text": _wrap_name("UP", f"{", ".join(parts) or "Waking..."}")
+        "full_text": wrap_name("UP", f"{", ".join(parts) or "Waking..."}")
     }
-
-############
-# DATETIME #
-############
 
 def pretty_now() -> dict:
     try:
@@ -242,10 +240,6 @@ def pretty_now() -> dict:
         "name": "id_time",
         "full_text": f"<big>{now}</big> "
     }
-
-################
-# MAIN PROGRAM #
-################
 
 def get_slow_blocks() -> list[dict]:
     return [

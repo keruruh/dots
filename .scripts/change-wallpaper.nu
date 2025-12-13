@@ -1,7 +1,10 @@
 #! /usr/bin/env nu
 
 def "wallpaper restore" [] {
-    feh --no-fehbg --bg-scale (glob ($nu.home-path | path join ".papes" "current.*") | get 0)
+    (feh
+        --quiet
+        --no-fehbg
+        --bg-scale (glob ($nu.home-path | path join ".papes" "current.*") | get 0))
 }
 
 def "wallpaper set" [image: string] {
@@ -14,31 +17,29 @@ def "wallpaper set" [image: string] {
     let extension = ($image | path parse | get extension)
     let current = $dir | path join $"current.($extension)"
 
-    rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
     cp $image $current
 
+    rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
+
     feh --no-fehbg --bg-scale $current
-    hellwal --quiet --bright-offset 1.0 --image $current
+    hellwal --quiet --skip-term-colors --image $current
 
+    kitty @ set-colors --all --configured ~/.cache/hellwal/kitty.conf
     i3-msg --quiet restart
-
-    ps | where name =~ "kitty" | each { |kitty|
-        kill --signal 10 $kitty.pid
-    }
 }
 
 def main [
     --image (-i): string
-    --random
-    --restore
+    --random (-r)
+    --restore (-e)
 ] {
-    if ($restore) {
-        wallpaper restore
+    if ($image | is-empty) and (not $random and not $restore) {
+        print "Rerun with --help to see the available flags."
         return
     }
 
-    if (($image | is-empty) and not $random) {
-        print "Rerun with --help to see the available flags."
+    if $restore {
+        wallpaper restore
         return
     }
 

@@ -2,7 +2,8 @@ include ~/.config/i3/keys.conf
 include ~/.config/i3/rules.conf
 include ~/.config/i3/styles.conf
 
-exec --no-startup-id ~/.scripts/change-wallpaper.nu --restore
-
 exec_always --no-startup-id xset dpms 0 0 600
 exec_always --no-startup-id xss-lock ~/.scripts/lock-screen.nu
+exec_always --no-startup-id ~/.scripts/launch-polybar.nu
+
+exec --no-startup-id ~/.scripts/change-wallpaper.nu --restore

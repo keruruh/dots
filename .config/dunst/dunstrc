@@ -1,0 +1,25 @@
+# See dunst(5) for all available configuration options.
+
+[global]
+    follow = mouse
+
+    origin = top-right
+    offset = (20, 20)
+
+    progress_bar = false
+
+    padding = 6
+    horizontal_padding = 6
+    frame_width = 3
+    gap_size = 15
+
+    sort = update
+
+    font = DejaVu Sans Mono 12
+    format = "<b>%s</b> (%a)\n%b
+
+    icon_theme = "Adwaita, Papirus"
+
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
