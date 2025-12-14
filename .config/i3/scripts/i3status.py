@@ -16,7 +16,8 @@ wallpaper_color = None
 def get_wallpaper_color() -> str:
     global wallpaper_color
 
-    # If the wallpaper color has been previously fetched, return the stored value.
+    # If the wallpaper color has been previously fetched, return the globally
+    # stored value.
     if wallpaper_color:
         return wallpaper_color
 
@@ -44,8 +45,8 @@ def get_wallpaper_color() -> str:
 
     return wallpaper_color
 
-# Interval (in seconds) to wait for updates of blocks that take longer to process.
-# This is useful for "slow" blocks where frequent updates might not be necessary.
+# Interval (in seconds) to wait for updates of blocks (except datetime).
+# This is useful for blocks where frequent updates might not be necessary.
 SLOW_UPDATE_INTERVAL = 5.0
 
 # The number of pixels to leave as a gap after a block.
@@ -53,15 +54,21 @@ SLOW_UPDATE_INTERVAL = 5.0
 SEPARATOR_BLOCK_WIDTH = 25
 
 # Specifies the locale used for formatting the current date and time.
-# Note that the specified locale must be installed on the system beforehand for it to work.
+# Note that the specified locale must be installed on the system beforehand for
+# it to work.
 DATETIME_LOCALE = "ja_JP"
 
 # Custom format for displaying the current date and time using strftime(3).
 # Supports pango formatting to style the output.
-DATETIME_FORMAT = f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
+DATETIME_FORMAT = (
+    f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
+)
 
 def wrap_name(title: str, text: str) -> str:
-    return f'<b><span foreground="{get_wallpaper_color()}">{title}</span></b>: {text}'
+    return (
+        f'<b><span foreground="{get_wallpaper_color()}">{title}</span></b>: '
+        f"{text}"
+    )
 
 def format_bytes(size: int) -> str:
     return f"{(size / (1024 ** 3)):.2f} GiB"
@@ -212,7 +219,9 @@ def pretty_memory() -> str:
 
     return {
         "name": "id_memory",
-        "full_text": wrap_name("RAM", f"{memory_used} of {memory_total} ({memory_percent}%)")
+        "full_text": wrap_name("RAM", (
+            f"{memory_used} of {memory_total} ({memory_percent}%)"
+        ))
     }
 
 def pretty_battery() -> str:
@@ -223,11 +232,11 @@ def pretty_battery() -> str:
             "name": "id_battery",
             "full_text": wrap_name("BAT", "None")
         }
-    else:
-        return {
-            "name": "id_battery",
-            "full_text": wrap_name("BAT", f"{battery.percent}%")
-        }
+
+    return {
+        "name": "id_battery",
+        "full_text": wrap_name("BAT", f"{battery.percent}%")
+    }
 
 def pretty_uptime() -> str:
     seconds = int(time.time() - psutil.boot_time())
@@ -246,7 +255,7 @@ def pretty_uptime() -> str:
 
     return {
         "name": "id_uptime",
-        "full_text": wrap_name("UP", f"{", ".join(parts) or "Waking..."}")
+        "full_text": wrap_name("UP", f'{", ".join(parts) or "Waking..."}')
     }
 
 def pretty_now() -> dict:

@@ -1,10 +1,11 @@
 #! /usr/bin/env nu
 
 def "wallpaper restore" [] {
-    (feh
-        --quiet
-        --no-fehbg
-        --bg-scale (glob ($nu.home-path | path join ".papes/current.*") | get 0))
+    let current_wallpaper = (glob
+        --no-dir
+        ($nu.home-path | path join ".papes/current.*") | get 0)
+
+    feh --quiet --no-fehbg --bg-scale $current_wallpaper
 }
 
 def "wallpaper set" [image: string] {
@@ -22,10 +23,13 @@ def "wallpaper set" [image: string] {
     rm --recursive --force ($nu.home-path | path join ".cache/hellwal/cache")
 
     feh --no-fehbg --bg-scale $current
-    hellwal --quiet --skip-term-colors --image $current
+    hellwal --quiet --image $current
 
-    kitty @ set-colors --all --configured ($nu.home-path | path join ".cache/hellwal/kitty.conf")
-    source ($nu.home-path | path join ".cache/hellwal/nushell.nu")
+    (kitten @ set-colors
+        --all
+        --configured ($nu.home-path | path join ".cache/hellwal/kitty.conf"))
+
+    exec nu
     i3-msg --quiet restart
 }
 
@@ -47,8 +51,12 @@ def main [
     if $random {
         let dir = $nu.home-path | path join ".papes"
 
-        let wallpapers = glob --no-dir $"($dir)/**" | where ($it | path parse).stem !~ ".keep"
-        let current = $wallpapers | where ($it | path parse).stem =~ "current" | first
+        let wallpapers = glob --no-dir $"($dir)/**"
+            | where ($it | path parse).stem !~ ".keep"
+
+        let current = $wallpapers
+            | where ($it | path parse).stem =~ "current"
+            | first
 
         loop {
             let random_wallpaper = $wallpapers

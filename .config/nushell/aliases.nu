@@ -1,6 +1,6 @@
 #! /usr/bin/env nu
 
-def ll [args?: string] {
+def l [args?: string] {
     ls --all ($args | default "./") | sort-by type name
 }
 
@@ -27,6 +27,7 @@ alias orphans = pacman --query --unrequired --deps
 alias gs = git status --short --branch
 alias ga = git add
 alias gaa = git add --all
+alias gc = git commit --all --message
 
 alias f = fzf --preview "bat --color always --style numbers {}"
 alias rf = rm --force --recursive --permanent

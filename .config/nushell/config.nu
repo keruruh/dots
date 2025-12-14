@@ -1,7 +1,8 @@
 #! /usr/bin/env nu
 
-source ~/.cache/hellwal/nushell.nu
-source ~/.config/nushell/aliases.nu
+source $nu.env-path
+source ($nu.default-config-dir | path join "aliases.nu")
+source ($nu.home-path | path join ".cache/hellwal/nushell.nu")
 
 $env.config.history = {
     file_format: plaintext
@@ -34,4 +35,5 @@ $env.config.filesize = {
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 
-starship init nu | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")
+starship init nu
+    | save --force ($nu.data-dir | path join "vendor/autoload/starship.nu")

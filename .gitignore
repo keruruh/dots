@@ -1,6 +1,7 @@
 # Ignore everything.
 *
 
+!KEYS.md
 !LICENSE.md
 !README.md
 
@@ -26,8 +27,9 @@
 .config/[qQ]t*
 
 .config/**/history.txt
-.config/**/pavucontrol.ini
+.config/**/lazy-lock.json
 .config/**/mimeapps.list
+.config/**/pavucontrol.ini
 
 !.papes/
 !.papes/**

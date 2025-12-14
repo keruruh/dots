@@ -10,12 +10,12 @@
 
     padding = 6
     horizontal_padding = 6
-    frame_width = 3
+    frame_width = 2
     gap_size = 15
 
     sort = update
 
-    font = DejaVu Sans Mono 14.0 
+    font = DejaVu Sans Mono 14.0
     format = "<b>%s</b> (%a)\n%b
 
     icon_theme = "Adwaita, Papirus"

@@ -9,7 +9,10 @@ def main [] {
     ]
 
     $files | each { |f|
-        sudo cp --force ($nu.home-path | path join $".etc/($f.file)") $f.location
+        sudo (cp
+            --force
+            ($nu.home-path | path join $".etc/($f.file)")
+            $f.location)
     }
 
     sudo locale-gen | ignore

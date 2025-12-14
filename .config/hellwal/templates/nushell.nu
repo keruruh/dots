@@ -1,3 +1,5 @@
+#! /usr/bin/env nu
+
 let c0 = "#%% color0.hex %%"
 let c1 = "#%% color1.hex %%"
 let c2 = "#%% color2.hex %%"

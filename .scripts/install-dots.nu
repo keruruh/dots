@@ -2,6 +2,7 @@
 
 def main [] {
     let packages = [
+        autotiling
         breeze
         breeze-gtk
         breeze-icons
@@ -26,7 +27,6 @@ def main [] {
         mpv
         nushell
         pavucontrol
-        pcmanfm
         picom
         python
         python-pipx
@@ -49,5 +49,11 @@ def main [] {
     git clone https://github.com/keruruh/dots.git .
 
     sudo pacman --sync --noconfirm ($packages | str join " ")
+
+    ~/.scripts/copy-etc.nu
+    ~/.scripts/list-packages.nu
+
+    sudo systemctl enable ly@tty1.service
+    sudo systemctl disable getty@tty1.service
 }
 
