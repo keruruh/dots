@@ -1,9 +1,9 @@
-include ~/.config/i3/keys.conf
-include ~/.config/i3/rules.conf
-include ~/.config/i3/styles.conf
+include ~/.config/i3/modules/keys.conf
+include ~/.config/i3/modules/rules.conf
+include ~/.config/i3/modules/styles.conf
 
+exec_always --no-startup-id xset r rate 200 30
 exec_always --no-startup-id xset dpms 0 0 600
-exec_always --no-startup-id xss-lock ~/.scripts/lock-screen.nu
-exec_always --no-startup-id ~/.scripts/launch-polybar.nu
+exec_always --no-startup-id xss-lock ~/.config/i3/scripts/i3lock.nu 
 
 exec --no-startup-id ~/.scripts/change-wallpaper.nu --restore

@@ -20,7 +20,6 @@ def --env y [...args: string] {
 alias yh = y $nu.home-path
 alias yc = y ($nu.home-path | path join ".config")
 alias ys = y ($nu.home-path | path join ".scripts")
-alias rf = rm --force --recursive
 
 alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps
@@ -28,3 +27,7 @@ alias orphans = pacman --query --unrequired --deps
 alias gs = git status --short --branch
 alias ga = git add
 alias gaa = git add --all
+
+alias f = fzf --preview "bat --color always --style numbers {}"
+alias rf = rm --force --recursive --permanent
+

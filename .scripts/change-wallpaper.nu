@@ -4,7 +4,7 @@ def "wallpaper restore" [] {
     (feh
         --quiet
         --no-fehbg
-        --bg-scale (glob ($nu.home-path | path join ".papes" "current.*") | get 0))
+        --bg-scale (glob ($nu.home-path | path join ".papes/current.*") | get 0))
 }
 
 def "wallpaper set" [image: string] {
@@ -24,7 +24,8 @@ def "wallpaper set" [image: string] {
     feh --no-fehbg --bg-scale $current
     hellwal --quiet --skip-term-colors --image $current
 
-    kitty @ set-colors --all --configured ~/.cache/hellwal/kitty.conf
+    kitty @ set-colors --all --configured ($nu.home-path | path join ".cache/hellwal/kitty.conf")
+    source ($nu.home-path | path join ".cache/hellwal/nushell.nu")
     i3-msg --quiet restart
 }
 

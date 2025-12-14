@@ -22,9 +22,6 @@
 .config/pcmanfm
 .config/pulse
 
-.config/micro/backups
-.config/micro/buffers
-
 .config/gtk-*
 .config/[qQ]t*
 

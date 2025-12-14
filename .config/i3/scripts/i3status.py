@@ -11,6 +11,39 @@ import socket
 import subprocess
 import time
 
+wallpaper_color = None
+
+def get_wallpaper_color() -> str:
+    global wallpaper_color
+
+    # If the wallpaper color has been previously fetched, return the stored value.
+    if wallpaper_color:
+        return wallpaper_color
+
+    wallpapers = glob.glob(os.path.expanduser("~/.papes/current.*"))
+    default_color = "#ffffff"
+
+    if not wallpapers:
+        wallpaper_color = default_color
+        return default_color
+
+    wallpaper = wallpapers[0]
+
+    out = subprocess.check_output([
+        "hellwal",
+        "--quiet",
+        "--json",
+        "--skip-term-colors",
+        "--no-cache",
+        "--image",
+        wallpaper
+    ], text=True)
+
+    data = json.loads(out)
+    wallpaper_color = data.get("colors", {}).get("color10", default_color)
+
+    return wallpaper_color
+
 # Interval (in seconds) to wait for updates of blocks that take longer to process.
 # This is useful for "slow" blocks where frequent updates might not be necessary.
 SLOW_UPDATE_INTERVAL = 5.0
@@ -25,33 +58,7 @@ DATETIME_LOCALE = "ja_JP"
 
 # Custom format for displaying the current date and time using strftime(3).
 # Supports pango formatting to style the output.
-DATETIME_FORMAT = "%F (<b>%a</b>) %T"
-
-def get_wallpaper_color() -> str:
-    wallpapers = glob.glob(os.path.expanduser("~/.papes/current.*"))
-    default_color = "#ffffff"
-
-    if not wallpapers:
-        return default_color
-
-    wallpaper = wallpapers[0]
-
-    try:
-        out = subprocess.check_output([
-            "hellwal",
-            "--quiet",
-            "--json",
-            "--skip-term-colors",
-            "--no-cache",
-            "--image",
-            wallpaper
-        ], text=True)
-
-        data = json.loads(out)
-
-        return data.get("colors", {}).get("color10", "#ffffff")
-    except Exception:
-        return default_color
+DATETIME_FORMAT = f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
 
 def wrap_name(title: str, text: str) -> str:
     return f'<b><span foreground="{get_wallpaper_color()}">{title}</span></b>: {text}'
@@ -208,6 +215,20 @@ def pretty_memory() -> str:
         "full_text": wrap_name("RAM", f"{memory_used} of {memory_total} ({memory_percent}%)")
     }
 
+def pretty_battery() -> str:
+    battery = psutil.sensors_battery()
+
+    if not battery:
+        return {
+            "name": "id_battery",
+            "full_text": wrap_name("BAT", "None")
+        }
+    else:
+        return {
+            "name": "id_battery",
+            "full_text": wrap_name("BAT", f"{battery.percent}%")
+        }
+
 def pretty_uptime() -> str:
     seconds = int(time.time() - psutil.boot_time())
 
@@ -247,6 +268,7 @@ def get_slow_blocks() -> list[dict]:
         pretty_ethernet(),
         pretty_cpu(),
         pretty_memory(),
+        pretty_battery(),
         pretty_uptime(),
     ]
 

@@ -2,7 +2,7 @@
 ratio = [2, 3, 3]
 
 sort_by = "extension"
-sort_sensitive = false
+sort_sensitive = true 
 sort_dir_first = true
 
 show_hidden = true

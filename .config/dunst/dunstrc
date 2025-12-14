@@ -15,7 +15,7 @@
 
     sort = update
 
-    font = DejaVu Sans Mono 12
+    font = DejaVu Sans Mono 14.0 
     format = "<b>%s</b> (%a)\n%b
 
     icon_theme = "Adwaita, Papirus"
