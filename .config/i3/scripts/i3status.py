@@ -47,7 +47,7 @@ def get_wallpaper_color() -> str:
 
 # Interval (in seconds) to wait for updates of blocks (except datetime).
 # This is useful for blocks where frequent updates might not be necessary.
-SLOW_UPDATE_INTERVAL = 5.0
+SLOW_UPDATE_INTERVAL = 10.0
 
 # The number of pixels to leave as a gap after a block.
 # A separator symbol will be drawn in the middle of this gap.
@@ -66,101 +66,74 @@ DATETIME_FORMAT = (
 
 def wrap_name(title: str, text: str) -> str:
     return (
-        f'<b><span foreground="{get_wallpaper_color()}">{title}</span></b>: '
+        f"<b><span foreground='{get_wallpaper_color()}'>{title}</span></b>: "
         f"{text}"
     )
 
 def format_bytes(size: int) -> str:
     return f"{(size / (1024 ** 3)):.2f} GiB"
 
-def get_iw_info(interface: str) -> dict:
-    try:
-        out = subprocess.check_output([
-            "iw",
-            interface,
-            "link"
-        ], stderr=subprocess.DEVNULL, text=True)
-    except Exception:
-        return {
-            "ssid": None,
-            "signal": None,
-            "bitrate": None
-        }
-
-    ssid = None
-    signal = None
-    bitrate = None
-
-    # SSID.
-    if m := re.search(r"SSID: (.+)", out):
-        ssid = m.group(1).strip()
-
-    # Signal.
-    if m := re.search(r"signal: (-?\d+) dBm", out):
-        dbm = int(m.group(1))
-        signal = max(0, min(100, 2 * (dBm + 90)))
-
-    # Bitrate.
-    if m := re.search(r"tx bitrate: ([\d.]+)", out):
-        bitrate = f"{m.group(1)} Mb/s"
-
-    return {
-        "ssid": ssid,
-        "signal": signal,
-        "bitrate": bitrate
-    }
-
-def get_ping_latency() -> str:
-    try:
-        out = subprocess.check_output([
-            "ping",
-            "-c",
-            "1",
-            "-w",
-            "1",
-            "8.8.8.8"
-        ], stderr=subprocess.DEVNULL, text=True)
-
-        if m := re.search(r"time=([\d.]+) ms", out):
-            return f"{float(m.group(1)):.1f} ms"
-    except Exception:
-        pass
-
-    return "N/A"
-
 def pretty_wifi() -> dict:
     stats = psutil.net_if_stats()
     addrs = psutil.net_if_addrs()
 
-    wifi = None
+    interface = None
 
     for name in stats:
         if name.startswith(("wl", "wlan")):
-            wifi = name
+            interface = name
             break
 
-    if wifi is None or not stats[wifi].isup:
+    if interface is None or not stats[interface].isup:
         return {
             "name": "id_wifi",
             "full_text": wrap_name("WLS", "Disconnected")
         }
 
+    def get_ssid() -> dict:
+        try:
+            out = subprocess.check_output([
+                "iw",
+                interface,
+                "link"
+            ], stderr=subprocess.DEVNULL, text=True)
+
+
+            if m := re.search(r"SSID: (.+)", out):
+                return m.group(1).strip()
+        except Exception:
+            pass
+
+        return "N/A"
+
+    def get_ping() -> str:
+        try:
+            out = subprocess.check_output([
+                "ping",
+                "-c",
+                "1",
+                "-w",
+                "1",
+                "8.8.8.8"
+            ], stderr=subprocess.DEVNULL, text=True)
+
+            if m := re.search(r"time=([\d.]+) ms", out):
+                return f"{int(float(m.group(1)))} ms"
+        except Exception:
+            pass
+
+        return "N/A"
+
     ipv4 = "No IP"
 
-    for a in addrs[wifi]:
+    for a in addrs[interface]:
         if a.family == socket.AF_INET:
             ipv4 = a.address
             break
 
-    info = get_iw_info(wifi)
-    ping = get_ping_latency()
-
-    ssid = info["ssid"] or "Unknown"
-    signal = f"{info['signal']}%" if info["signal"] is not None else "N/A"
-
     return {
         "name": "id_wifi",
-        "full_text": wrap_name("WLS", f"{ssid} ({ipv4}) {signal} ping {ping}")
+        "full_text": wrap_name("WLS", f"{get_ssid()} at {get_ping()}")
     }
 
 def pretty_ethernet() -> dict:
@@ -200,10 +173,10 @@ def pretty_cpu() -> dict:
 
     for key in ["acpitz", "coretemp"]:
         if key in temps and temps[key]:
-            current_temp = temps[key][0].current
+            current_temp = int(temps[key][0].current)
             break
 
-    temp_text = f"{current_temp:.2f}°C" if current_temp is not None else "N/A"
+    temp_text = f"{current_temp}°C" if current_temp is not None else "N/A"
 
     return {
         "name": "id_cpu",
@@ -213,14 +186,14 @@ def pretty_cpu() -> dict:
 def pretty_memory() -> str:
     memory = psutil.virtual_memory()
 
-    memory_used = format_bytes(memory.used)
-    memory_total = format_bytes(memory.total)
-    memory_percent = f"{(memory.used / memory.total * 100):.2f}"
+    used = format_bytes(memory.used)
+    total = format_bytes(memory.total)
+    percent = f"{(memory.used / memory.total * 100):.2f}"
 
     return {
         "name": "id_memory",
         "full_text": wrap_name("RAM", (
-            f"{memory_used} of {memory_total} ({memory_percent}%)"
+            f"{used} of {total} ({percent}%)"
         ))
     }
 
@@ -233,9 +206,13 @@ def pretty_battery() -> str:
             "full_text": wrap_name("BAT", "None")
         }
 
+    percent = "Full" if int(battery.percent) == 100 else f"{battery.percent:.2f}%"
+    plugged = "Plugged" if battery.power_plugged else "Not Plugged"
+    left = str(datetime.timedelta(seconds=battery.secsleft))
+
     return {
         "name": "id_battery",
-        "full_text": wrap_name("BAT", f"{battery.percent}%")
+        "full_text": wrap_name("BAT", f"{percent} left {left} ({plugged})")
     }
 
 def pretty_uptime() -> str:
@@ -262,6 +239,7 @@ def pretty_now() -> dict:
     try:
         locale.setlocale(locale.LC_TIME, f"{DATETIME_LOCALE}.UTF-8")
     except locale.Error:
+        # Use default locale.
         pass
 
     now = datetime.datetime.now().strftime(DATETIME_FORMAT)
