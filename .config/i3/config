@@ -5,6 +5,6 @@ include ~/.config/i3/modules/styles.conf
 exec_always --no-startup-id xset r rate 200 30
 exec_always --no-startup-id xset dpms 0 0 600
 exec_always --no-startup-id xss-lock ~/.config/i3/scripts/i3lock.nu
-exec_always --no-startup-id dunst -config ~/.cache/hellwal/dunst
+exec_always --no-startup-id dunst -config ~/.cache/hellwal/dunst &
 
 exec --no-startup-id ~/.scripts/set-wallpaper.nu --restore

@@ -21,7 +21,7 @@ def get_wallpaper_color() -> str:
     if wallpaper_color:
         return wallpaper_color
 
-    wallpapers = glob.glob(os.path.expanduser("~/.papes/current.*"))
+    wallpapers = glob.glob(os.path.expanduser("~/.papes/_current.*"))
     default_color = "#ffffff"
 
     if not wallpapers:
