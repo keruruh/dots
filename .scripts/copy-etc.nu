@@ -3,9 +3,10 @@
 def main [] {
     let files = [
         { file: "environment", location: "/etc/environment" },
-        { file: "pacman.conf", location: "/etc/pacman.conf" },
         { file: "locale.gen", location: "/etc/locale.gen" },
         { file: "ly.ini", location: "/etc/ly/config.ini" }
+        { file: "pacman.conf", location: "/etc/pacman.conf" },
+	{ file: "xorg.conf", location: "/etc/X11/xorg.conf" }
     ]
 
     $files | each { |f|
@@ -16,4 +17,6 @@ def main [] {
     }
 
     sudo locale-gen | ignore
+
+    print "You might need to restart your system to apply some changes."
 }

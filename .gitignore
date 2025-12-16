@@ -1,6 +1,8 @@
 # Ignore everything.
 *
 
+**/telemetry/
+
 !KEYS.md
 !LICENSE.md
 !README.md

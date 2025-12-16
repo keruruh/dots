@@ -208,11 +208,11 @@ def pretty_battery() -> str:
 
     percent = "Full" if int(battery.percent) == 100 else f"{battery.percent:.2f}%"
     plugged = "Plugged" if battery.power_plugged else "Not Plugged"
-    left = str(datetime.timedelta(seconds=battery.secsleft))
+    left = int(battery.secsleft / 3600)
 
     return {
         "name": "id_battery",
-        "full_text": wrap_name("BAT", f"{percent} left {left} ({plugged})")
+        "full_text": wrap_name("BAT", f"{left}h left, {percent} ({plugged})")
     }
 
 def pretty_uptime() -> str:
