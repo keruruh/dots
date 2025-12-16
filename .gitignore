@@ -1,7 +1,8 @@
 # Ignore everything.
 *
 
-**/telemetry/
+telemetry/
+telemetry/**
 
 !KEYS.md
 !LICENSE.md
