@@ -34,7 +34,8 @@
 !.papes/
 !.papes/**
 
-current.*
+./papes/**/_current.*
+./papes/**/_default.*
 
 !.scripts/
 !.scripts/**
