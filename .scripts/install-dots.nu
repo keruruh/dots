@@ -2,7 +2,6 @@
 
 def main [] {
     let packages = [
-        autotiling
         breeze
         breeze-gtk
         breeze-icons
@@ -29,12 +28,15 @@ def main [] {
         pavucontrol
         picom
         python
-        python-pipx
+        python-psutil
+        python-pynvim
         qt5ct
         qt6ct
         rofi
         rustup
         starship
+        tree-sitter
+        tree-sitter-cli
         yazi
         zig
         zls

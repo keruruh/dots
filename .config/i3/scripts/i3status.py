@@ -16,8 +16,7 @@ wallpaper_color = None
 def get_wallpaper_color() -> str:
     global wallpaper_color
 
-    # If the wallpaper color has been previously fetched, return the globally
-    # stored value.
+    # If the wallpaper color has been previously fetched, return the stored value.
     if wallpaper_color:
         return wallpaper_color
 
@@ -54,8 +53,7 @@ SLOW_UPDATE_INTERVAL = 10.0
 SEPARATOR_BLOCK_WIDTH = 25
 
 # Specifies the locale used for formatting the current date and time.
-# Note that the specified locale must be installed on the system beforehand for
-# it to work.
+# The specified locale must be installed on the system beforehand for it to work.
 DATETIME_LOCALE = "ja_JP"
 
 # Custom format for displaying the current date and time using strftime(3).
@@ -192,9 +190,7 @@ def pretty_memory() -> str:
 
     return {
         "name": "id_memory",
-        "full_text": wrap_name("RAM", (
-            f"{used} of {total} ({percent}%)"
-        ))
+        "full_text": wrap_name("RAM", f"{used} of {total} ({percent}%)")
     }
 
 def pretty_battery() -> str:
@@ -207,12 +203,21 @@ def pretty_battery() -> str:
         }
 
     percent = "Full" if int(battery.percent) == 100 else f"{battery.percent:.2f}%"
-    plugged = "Plugged" if battery.power_plugged else "Not Plugged"
-    left = int(battery.secsleft / 3600)
+
+    if battery.power_plugged:
+        plugged = "Plugged"
+        left = f"{percent}"
+    else:
+        plugged = "Not Plugged"
+
+        if int(battery.secsleft / 3600) == 0:
+            left = f"int(battery.secsleft / 60)m left, {percent}"
+        else:
+            left = f"{int(battery.secsleft / 3600)}h left, {percent}"
 
     return {
         "name": "id_battery",
-        "full_text": wrap_name("BAT", f"{left}h left, {percent} ({plugged})")
+        "full_text": wrap_name("BAT", f"{percent} ({plugged})")
     }
 
 def pretty_uptime() -> str:
@@ -234,6 +239,20 @@ def pretty_uptime() -> str:
         "name": "id_uptime",
         "full_text": wrap_name("UP", f'{", ".join(parts) or "Waking..."}')
     }
+
+def pretty_layout() -> dict:
+    try:
+        out = subprocess.check_output([
+            "setxkbmap",
+            "-print",
+            "-verbose",
+            "10"
+        ], stderr=subprocess.DEVNULL, text=True)
+
+        if m := re.search(r"layout: .+([a-z]+)", out):
+            return f"{m.group(1)}"
+    except Exception:
+        pass
 
 def pretty_now() -> dict:
     try:

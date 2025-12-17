@@ -6,12 +6,12 @@ def main [
 ] {
     if ($value | is-empty) and (not $restore) {
         print "Rerun with --help to see the available flags."
-	return
+        return
     }
 
     if $restore {
         brightnessctl --quiet --restore
-	return
+        return
     }
 
     brightnessctl --quiet --save set $value
@@ -22,5 +22,5 @@ def main [
     let percent = ($current_brightness / $max_brightness * 100) | into int
 
     dunstify --close 101
-    dunstify --replace 101 --timeout 1000 i3 $"Current Brightness: ($percent)%" 
+    dunstify --replace 101 --timeout 1000 i3 $"Current Brightness: ($percent)%"
 }
