@@ -2,10 +2,10 @@
 
 Feel free to clone and use however you want but note that some things might not work by
 default on your system. PRs and issues (if any) will be ignored because this isn't
-supposed to be an *all-in-one* *work-for-all* sub-distro. If you are interested in
-something like that, you might enjoy something like [Omarchy](https://omarchy.org/).
+supposed to be an *all-in-one* *work-for-all* config setup. If you are interested in
+something like that, you might enjoy [Omarchy](https://omarchy.org/).
 
-## Current Setup
+## Setup
 
 - AUR Helper: `paru`
 - Display Manager: `ly`
