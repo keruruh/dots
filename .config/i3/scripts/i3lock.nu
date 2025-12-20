@@ -1,7 +1,7 @@
 #! /usr/bin/env nu
 
 def main [] {
-    let screen = "/tmp/lock_screen.png"
+    let screen = "/tmp/lock-screen.png"
 
     rm --force $screen
 

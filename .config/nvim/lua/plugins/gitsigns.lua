@@ -23,7 +23,7 @@ return {
 
                 map("n", "]c", function()
                     if vim.wo.diff then
-                        vim.cmd.normal({"]c", bang = true})
+                        vim.cmd.normal({ "]c", bang = true })
                     else
                         gitsigns.nav_hunk("next")
                     end
@@ -31,7 +31,7 @@ return {
 
                 map("n", "[c", function()
                     if vim.wo.diff then
-                        vim.cmd.normal({"[c", bang = true})
+                        vim.cmd.normal({ "[c", bang = true })
                     else
                         gitsigns.nav_hunk("prev")
                     end
@@ -58,10 +58,14 @@ return {
                 end)
 
                 map("n", "<leader>hd", gitsigns.diffthis)
-                map("n", "<leader>hD", function() gitsigns.diffthis("~") end)
+                map("n", "<leader>hD", function()
+                    gitsigns.diffthis("~")
+                end)
 
                 map("n", "<leader>hq", gitsigns.setqflist)
-                map("n", "<leader>hQ", function() gitsigns.setqflist("all") end)
+                map("n", "<leader>hQ", function()
+                    gitsigns.setqflist("all")
+                end)
 
                 map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
                 map("n", "<leader>tw", gitsigns.toggle_word_diff)

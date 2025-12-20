@@ -100,10 +100,16 @@ local function render_buffer()
             first_line_col = 0
         end
 
-        vim.api.nvim_buf_set_extmark(global_buffer, NAMESPACE, start_row, first_line_col, {
-            end_row = start_row + CONTENT_HEIGHT,
-            hl_group = "IntroLogo"
-        })
+        vim.api.nvim_buf_set_extmark(
+            global_buffer,
+            NAMESPACE,
+            start_row,
+            first_line_col,
+            {
+                end_row = start_row + CONTENT_HEIGHT,
+                hl_group = "IntroLogo",
+            }
+        )
     end
 end
 
@@ -111,7 +117,7 @@ local function create_global_buffer()
     local current_buffer = vim.api.nvim_get_current_buf()
     local current_buffer_name = vim.api.nvim_buf_get_name(current_buffer)
     local current_buffer_filetype = vim.api.nvim_get_option_value("filetype", {
-        buf = current_buffer
+        buf = current_buffer,
     })
 
     if current_buffer_name ~= "" and current_buffer_filetype ~= BUFFER_NAME then
@@ -130,7 +136,7 @@ local function create_global_buffer()
     vim.api.nvim_create_autocmd({ "WinResized", "VimResized" }, {
         group = AUTOCMD_GROUP,
         buffer = global_buffer,
-        callback = render_buffer
+        callback = render_buffer,
     })
 end
 
@@ -140,5 +146,5 @@ vim.api.nvim_set_hl_ns(NAMESPACE)
 vim.api.nvim_create_autocmd("VimEnter", {
     group = AUTOCMD_GROUP,
     callback = create_global_buffer,
-    once = true
+    once = true,
 })

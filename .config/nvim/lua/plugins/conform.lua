@@ -39,7 +39,11 @@ return {
 
         formatters_by_ft = {
             lua = { "stylua" },
-            python = { "black" },
+            python = {
+                "ruff_fix",
+                "ruff_format",
+                "ruff_organize_imports",
+            },
         },
 
         notify_no_formatters = false,

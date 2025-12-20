@@ -35,5 +35,5 @@ return {
             ibl_hooks.type.SCOPE_HIGHLIGHT,
             ibl_hooks.builtin.scope_highlight_from_extmark
         )
-    end
+    end,
 }

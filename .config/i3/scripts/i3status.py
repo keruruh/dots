@@ -5,18 +5,22 @@ import glob
 import json
 import locale
 import os
-import psutil
 import re
 import socket
 import subprocess
 import time
 
+import psutil
+
 wallpaper_color = None
+
 
 def get_wallpaper_color() -> str:
     global wallpaper_color
 
     # If the wallpaper color has been previously fetched, return the stored value.
+    # This is very important since otherwise we would call Hellwal every time the
+    # blocks are updated, which produces a lot of lag.
     if wallpaper_color:
         return wallpaper_color
 
@@ -29,20 +33,24 @@ def get_wallpaper_color() -> str:
 
     wallpaper = wallpapers[0]
 
-    out = subprocess.check_output([
-        "hellwal",
-        "--quiet",
-        "--json",
-        "--skip-term-colors",
-        "--no-cache",
-        "--image",
-        wallpaper
-    ], text=True)
+    out = subprocess.check_output(
+        [
+            "hellwal",
+            "--quiet",
+            "--json",
+            "--skip-term-colors",
+            "--no-cache",
+            "--image",
+            wallpaper,
+        ],
+        text=True,
+    )
 
     data = json.loads(out)
     wallpaper_color = data.get("colors", {}).get("color10", default_color)
 
     return wallpaper_color
+
 
 # Interval (in seconds) to wait for updates of blocks (except datetime).
 # This is useful for blocks where frequent updates might not be necessary.
@@ -58,22 +66,19 @@ DATETIME_LOCALE = "ja_JP"
 
 # Custom format for displaying the current date and time using strftime(3).
 # Supports pango formatting to style the output.
-DATETIME_FORMAT = (
-    f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
-)
+DATETIME_FORMAT = f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
+
 
 def wrap_name(title: str, text: str) -> str:
-    return (
-        f"<b><span foreground='{get_wallpaper_color()}'>{title}</span></b>: "
-        f"{text}"
-    )
+    return f"<b><span foreground='{get_wallpaper_color()}'>{title}</span></b>: {text}"
+
 
 def format_bytes(size: int) -> str:
-    return f"{(size / (1024 ** 3)):.2f} GiB"
+    return f"{(size / (1024**3)):.2f} GiB"
+
 
 def pretty_wifi() -> dict:
     stats = psutil.net_if_stats()
-    addrs = psutil.net_if_addrs()
 
     interface = None
 
@@ -83,19 +88,13 @@ def pretty_wifi() -> dict:
             break
 
     if interface is None or not stats[interface].isup:
-        return {
-            "name": "id_wifi",
-            "full_text": wrap_name("WLS", "Disconnected")
-        }
+        return {"name": "id_wifi", "full_text": wrap_name("WLS", "Disconnected")}
 
     def get_ssid() -> dict:
         try:
-            out = subprocess.check_output([
-                "iw",
-                interface,
-                "link"
-            ], stderr=subprocess.DEVNULL, text=True)
-
+            out = subprocess.check_output(
+                ["iw", interface, "link"], stderr=subprocess.DEVNULL, text=True
+            )
 
             if m := re.search(r"SSID: (.+)", out):
                 return m.group(1).strip()
@@ -106,14 +105,11 @@ def pretty_wifi() -> dict:
 
     def get_ping() -> str:
         try:
-            out = subprocess.check_output([
-                "ping",
-                "-c",
-                "1",
-                "-w",
-                "1",
-                "8.8.8.8"
-            ], stderr=subprocess.DEVNULL, text=True)
+            out = subprocess.check_output(
+                ["ping", "-c", "1", "-w", "1", "8.8.8.8"],
+                stderr=subprocess.DEVNULL,
+                text=True,
+            )
 
             if m := re.search(r"time=([\d.]+) ms", out):
                 return f"{int(float(m.group(1)))} ms"
@@ -122,49 +118,41 @@ def pretty_wifi() -> dict:
 
         return "N/A"
 
-    ipv4 = "No IP"
-
-    for a in addrs[interface]:
-        if a.family == socket.AF_INET:
-            ipv4 = a.address
-            break
-
     return {
         "name": "id_wifi",
-        "full_text": wrap_name("WLS", f"{get_ssid()} at {get_ping()}")
+        "full_text": wrap_name("WLS", f"{get_ssid()} at {get_ping()}"),
     }
+
 
 def pretty_ethernet() -> dict:
     stats = psutil.net_if_stats()
-    addrs = psutil.net_if_addrs()
+    addresses = psutil.net_if_addrs()
 
-    eth = None
+    ethernet = None
 
     for name in stats:
         if name.startswith(("en", "eth")):
-            eth = name
+            ethernet = name
             break
 
-    if eth is None or not stats[eth].isup:
-        return {
-            "name": "id_ethernet",
-            "full_text": wrap_name("ETH", "Disconnected")
-        }
+    if ethernet is None or not stats[ethernet].isup:
+        return
 
     ipv4 = "No IP"
 
-    for a in addrs[eth]:
+    for a in addresses[ethernet]:
         if a.family == socket.AF_INET:
             ipv4 = a.address
             break
 
     return {
         "name": "id_ethernet",
-        "full_text": wrap_name("ETH", f"{eth} ({ipv4})")
+        "full_text": wrap_name("ETH", f"{ethernet} ({ipv4})"),
     }
 
+
 def pretty_cpu() -> dict:
-    cpu_percent = psutil.cpu_percent()
+    percent = psutil.cpu_percent()
     temps = psutil.sensors_temperatures()
 
     current_temp = None
@@ -178,8 +166,9 @@ def pretty_cpu() -> dict:
 
     return {
         "name": "id_cpu",
-        "full_text": wrap_name("CPU", f"{cpu_percent:.2f}% at {temp_text}")
+        "full_text": wrap_name("CPU", f"{percent:.2f}% at {temp_text}"),
     }
+
 
 def pretty_memory() -> str:
     memory = psutil.virtual_memory()
@@ -190,24 +179,21 @@ def pretty_memory() -> str:
 
     return {
         "name": "id_memory",
-        "full_text": wrap_name("RAM", f"{used} of {total} ({percent}%)")
+        "full_text": wrap_name("RAM", f"{used} of {total} ({percent}%)"),
     }
+
 
 def pretty_battery() -> str:
     battery = psutil.sensors_battery()
 
     if not battery:
-        return {
-            "name": "id_battery",
-            "full_text": wrap_name("BAT", "None")
-        }
+        return
 
+    left = None
     percent = "Full" if int(battery.percent) == 100 else f"{battery.percent:.2f}%"
+    plugged = "Plugged"
 
-    if battery.power_plugged:
-        plugged = "Plugged"
-        left = f"{percent}"
-    else:
+    if not battery.power_plugged:
         plugged = "Not Plugged"
 
         if int(battery.secsleft / 3600) == 0:
@@ -217,8 +203,9 @@ def pretty_battery() -> str:
 
     return {
         "name": "id_battery",
-        "full_text": wrap_name("BAT", f"{percent} ({plugged})")
+        "full_text": wrap_name("BAT", f"{left or percent} ({plugged})"),
     }
+
 
 def pretty_uptime() -> str:
     seconds = int(time.time() - psutil.boot_time())
@@ -237,22 +224,26 @@ def pretty_uptime() -> str:
 
     return {
         "name": "id_uptime",
-        "full_text": wrap_name("UP", f'{", ".join(parts) or "Waking..."}')
+        "full_text": wrap_name("UP", f"{', '.join(parts) or 'Waking...'}"),
     }
 
-def pretty_layout() -> dict:
-    try:
-        out = subprocess.check_output([
-            "setxkbmap",
-            "-print",
-            "-verbose",
-            "10"
-        ], stderr=subprocess.DEVNULL, text=True)
 
-        if m := re.search(r"layout: .+([a-z]+)", out):
-            return f"{m.group(1)}"
+def pretty_keyboard() -> dict:
+    try:
+        out = subprocess.check_output(
+            ["setxkbmap", "-print", "-verbose", "10"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+
+        if m := re.search(r"layout:(?: +)?([a-z]+)", out):
+            return {
+                "name": "id_keyboard",
+                "full_text": wrap_name("KB", f"{m.group(1).upper() or 'N/A'}"),
+            }
     except Exception:
         pass
+
 
 def pretty_now() -> dict:
     try:
@@ -263,10 +254,8 @@ def pretty_now() -> dict:
 
     now = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
-    return {
-        "name": "id_time",
-        "full_text": f"<big>{now}</big> "
-    }
+    return {"name": "id_time", "full_text": f"<big>{now}</big> "}
+
 
 def get_slow_blocks() -> list[dict]:
     return [
@@ -276,7 +265,9 @@ def get_slow_blocks() -> list[dict]:
         pretty_memory(),
         pretty_battery(),
         pretty_uptime(),
+        pretty_keyboard(),
     ]
+
 
 if __name__ == "__main__":
     print('{ "version": 1, "click_events": false }')
@@ -296,8 +287,9 @@ if __name__ == "__main__":
         blocks = slow_blocks + [pretty_now()]
 
         for block in blocks:
-            block.setdefault("markup", "pango")
-            block.setdefault("separator_block_width", SEPARATOR_BLOCK_WIDTH)
+            if block:
+                block.setdefault("markup", "pango")
+                block.setdefault("separator_block_width", SEPARATOR_BLOCK_WIDTH)
 
         print(f", {json.dumps(blocks)}", flush=True)
 

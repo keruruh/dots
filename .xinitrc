@@ -12,6 +12,4 @@ if not ($nu.home-path | path join ".cache/hellwal" | path exists) {
 source $nu.config-path
 source $nu.env-path
 
-# Redirect all i3 output to "/dev/null".
-# You can remove or modify everything after "exec i3" if you don't like this.
-exec i3 o+e> (std null-device)
+exec i3

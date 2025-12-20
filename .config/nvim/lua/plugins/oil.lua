@@ -3,8 +3,11 @@ return {
 
     config = function()
         local oil = require("oil")
+        local t_builtin = require("telescope.builtin")
 
         oil.setup({
+            delete_to_trash = true,
+
             keymaps = {
                 ["~"] = "<Cmd>edit $HOME<CR>",
                 ["<Leader>ff"] = {
@@ -13,8 +16,8 @@ return {
                     nowait = true,
 
                     function()
-                        require("telescope.builtin").find_files({
-                            cwd = oil.get_current_dir()
+                        t_builtin.find_files({
+                            cwd = oil.get_current_dir(),
                         })
                     end,
                 },

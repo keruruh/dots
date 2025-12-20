@@ -24,11 +24,6 @@ alias ys = y ($nu.home-path | path join ".scripts")
 alias upgrade = sudo pacman --sync --refresh --refresh --sysupgrade --confirm
 alias orphans = pacman --query --unrequired --deps
 
-alias gs = git status --short --branch
-alias ga = git add
-alias gaa = git add --all
-alias gc = git commit --all --message
-
 alias f = fzf --preview "bat --color always --style numbers {}"
 alias rf = rm --force --recursive --permanent
 

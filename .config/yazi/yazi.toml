@@ -1,7 +1,9 @@
+# References: https://yazi-rs.github.io/docs/configuration/overview
+
 [mgr]
 linemode = "time_and_size"
 
-ratio = [2, 2, 4]
+ratio = [2, 3, 3]
 
 sort_by = "extension"
 sort_sensitive = true

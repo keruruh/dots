@@ -12,5 +12,5 @@ return {
 
         vim.keymap.set("n", "]t", todo.jump_next, { desc = "Next TODO Comment" })
         vim.keymap.set("n", "[t", todo.jump_prev, { desc = "Previous TODO Comment" })
-    end
+    end,
 }
