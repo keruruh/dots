@@ -4,6 +4,22 @@ return {
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
 
+    keys = {
+        {
+            "<leader>f",
+
+            mode = "",
+            desc = "Format Current Buffer",
+
+            function()
+                require("conform").format({
+                    async = true,
+                    lsp_format = "fallback",
+                })
+            end,
+        },
+    },
+
     opts = {
         format_on_save = function(buffer)
             local disable_filetypes = {
@@ -25,5 +41,7 @@ return {
             lua = { "stylua" },
             python = { "black" },
         },
+
+        notify_no_formatters = false,
     },
 }

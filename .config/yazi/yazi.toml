@@ -1,5 +1,7 @@
 [mgr]
-ratio = [2, 3, 3]
+linemode = "time_and_size"
+
+ratio = [2, 2, 4]
 
 sort_by = "extension"
 sort_sensitive = true

@@ -1,5 +1,7 @@
 return {
     "ellisonleao/gruvbox.nvim",
 
-    opts = { contrast = "hard" },
+    opts = {
+        contrast = "hard",
+    },
 }

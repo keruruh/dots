@@ -1,4 +1,5 @@
--- Bootstrap lazy.
+-- Bootstrap lazy.nvim plugin manager.
+-- For more information visit: https://lazy.folke.io/installation
 
 local lazy_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
@@ -33,5 +34,8 @@ require("lazy").setup({
         { import = "plugins" },
     },
 
-    checker = { enabled = true },
+    checker = {
+        enabled = true,
+        notify = false,
+    },
 })

@@ -1,18 +1,30 @@
 return {
     "stevearc/oil.nvim",
 
-    dependencies = {
-        { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_icons },
-    },
+    config = function()
+        local oil = require("oil")
 
-    opts = {
-        delete_to_trash = true,
-        skip_confirm_for_simple_edits = true,
-        watch_for_changes = true,
+        oil.setup({
+            keymaps = {
+                ["~"] = "<Cmd>edit $HOME<CR>",
+                ["<Leader>ff"] = {
+                    mode = "n",
+                    desc = "Find files in the current directory",
+                    nowait = true,
 
-        view_options = {
-            natural_order = true,
-            show_hidden = true,
-        },
-    },
+                    function()
+                        require("telescope.builtin").find_files({
+                            cwd = oil.get_current_dir()
+                        })
+                    end,
+                },
+            },
+
+            view_options = {
+                show_hidden = true,
+            },
+        })
+
+        vim.keymap.set("n", "-", oil.open)
+    end,
 }

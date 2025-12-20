@@ -30,7 +30,6 @@ telemetry/**
 .config/[qQ]t*
 
 .config/**/history.txt
-.config/**/lazy-lock.json
 .config/**/mimeapps.list
 .config/**/pavucontrol.ini
 
