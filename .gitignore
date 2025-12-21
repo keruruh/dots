@@ -21,6 +21,7 @@ telemetry/**
 !.config/**
 
 .config/dconf
+.config/discord
 .config/keepassxc
 .config/libfm
 .config/pcmanfm
@@ -36,8 +37,8 @@ telemetry/**
 !.papes/
 !.papes/**
 
-./papes/**/_current.*
-./papes/**/_default.*
+.papes/**/_current.*
+.papes/**/_default.*
 
 !.scripts/
 !.scripts/**

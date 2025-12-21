@@ -1,6 +1,6 @@
 Xcursor.theme: Breeze-Dark
 
 ! Global easy-access variables used by i3.
-i3fontSize: 10
+i3fontSize: 12
 i3gapSize: 4
 i3borderSize: 2

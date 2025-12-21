@@ -12,6 +12,12 @@ auto({ "BufWritePre" }, {
     end,
 })
 
+auto({ "BufWritePost" }, {
+    desc = "Get rid of message after writing a file",
+    pattern = { "*" },
+    command = "redrawstatus",
+})
+
 auto({ "TextYankPost" }, {
     desc = "Highlight Text after Yank",
 
@@ -41,7 +47,6 @@ auto({ "InsertLeave" }, {
 })
 
 auto({ "CmdlineEnter" }, {
-    group = vim.api.nvim_create_augroup("on_cmdlineenter", { clear = true }),
     desc = "Do Not Hide the Status-Line When Typing a Command",
 
     callback = function()
@@ -50,10 +55,15 @@ auto({ "CmdlineEnter" }, {
 })
 
 auto({ "CmdlineLeave" }, {
-    group = vim.api.nvim_create_augroup("on_cmdlineleave", { clear = true }),
     desc = "Hide the Command-Line When Not Typing a Command",
 
     callback = function()
         vim.opt.cmdheight = 0
     end,
+})
+
+auto("FileType", {
+    desc = "Open Vertical Splits for Help Pages",
+    pattern = { "help", "man" },
+    command = "wincmd L",
 })

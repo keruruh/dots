@@ -1,9 +1,9 @@
 local key = vim.keymap.set
 
-key("n", "<Left>", '<Cmd>echo "Use h to move!"<CR>')
-key("n", "<Right>", '<Cmd>echo "Use l to move!"<CR>')
-key("n", "<Up>", '<Cmd>echo "Use k to move!"<CR>')
-key("n", "<Down>", '<Cmd>echo "Use j to move!"<CR>')
+key("n", "<Left>", '<Cmd>echo "Use h to move!"<CR><CR>')
+key("n", "<Right>", '<Cmd>echo "Use l to move!"<CR><CR>')
+key("n", "<Up>", '<Cmd>echo "Use k to move!"<CR><CR>')
+key("n", "<Down>", '<Cmd>echo "Use j to move!"<CR><CR>')
 
 key("n", "<Esc>", "<Cmd>nohlsearch<CR>", { desc = "Clear Highlights" })
 

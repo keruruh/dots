@@ -6,6 +6,7 @@ import json
 import locale
 import os
 import re
+import shlex
 import socket
 import subprocess
 import time
@@ -13,6 +14,15 @@ import time
 import psutil
 
 wallpaper_color = None
+
+
+def run_process(command: str) -> str | None:
+    try:
+        return subprocess.check_output(
+            shlex.split(command), stderr=subprocess.DEVNULL, text=True
+        ).strip()
+    except subprocess.CalledProcessError:
+        return None
 
 
 def get_wallpaper_color() -> str:
@@ -33,40 +43,29 @@ def get_wallpaper_color() -> str:
 
     wallpaper = wallpapers[0]
 
-    out = subprocess.check_output(
-        [
-            "hellwal",
-            "--quiet",
-            "--json",
-            "--skip-term-colors",
-            "--no-cache",
-            "--image",
-            wallpaper,
-        ],
-        text=True,
-    )
-
-    data = json.loads(out)
-    wallpaper_color = data.get("colors", {}).get("color10", default_color)
+    out = run_process(f"hellwal --skip-term-colors --no-cache -q -j -i {wallpaper}")
+    wallpaper_color = json.loads(out).get("colors", {}).get("color11", default_color)
 
     return wallpaper_color
 
 
 # Interval (in seconds) to wait for updates of blocks (except datetime).
 # This is useful for blocks where frequent updates might not be necessary.
-SLOW_UPDATE_INTERVAL = 10.0
+SLOW_UPDATE_INTERVAL: float = 5.0
 
 # The number of pixels to leave as a gap after a block.
 # A separator symbol will be drawn in the middle of this gap.
-SEPARATOR_BLOCK_WIDTH = 25
+SEPARATOR_BLOCK_WIDTH: int = 20
 
 # Specifies the locale used for formatting the current date and time.
 # The specified locale must be installed on the system beforehand for it to work.
-DATETIME_LOCALE = "ja_JP"
+DATETIME_LOCALE: str = "ja_JP"
 
 # Custom format for displaying the current date and time using strftime(3).
 # Supports pango formatting to style the output.
-DATETIME_FORMAT = f"%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T"
+DATETIME_FORMAT: str = (
+    f"<big>%F (<b><span foreground='{get_wallpaper_color()}'>%a</span></b>) %T</big>"
+)
 
 
 def wrap_name(title: str, text: str) -> str:
@@ -80,47 +79,51 @@ def format_bytes(size: int) -> str:
 def pretty_wifi() -> dict:
     stats = psutil.net_if_stats()
 
-    interface = None
-
-    for name in stats:
-        if name.startswith(("wl", "wlan")):
-            interface = name
-            break
+    interface = next((name for name in stats if name.startswith(("wl", "wlan"))), None)
 
     if interface is None or not stats[interface].isup:
-        return {"name": "id_wifi", "full_text": wrap_name("WLS", "Disconnected")}
+        return
 
-    def get_ssid() -> dict:
-        try:
-            out = subprocess.check_output(
-                ["iw", interface, "link"], stderr=subprocess.DEVNULL, text=True
-            )
+    def _nm_active_connection() -> str | None:
+        out = run_process("nmcli -t -f DEVICE,NAME connection show --active")
 
-            if m := re.search(r"SSID: (.+)", out):
-                return m.group(1).strip()
-        except Exception:
-            pass
+        for line in out.splitlines():
+            device, name = line.split(":", 1)
+
+            if name and device == interface:
+                return name
+
+    def _nm_active_ssid() -> str | None:
+        out = run_process(f"nmcli -t -f IN-USE,SSID dev wifi list ifname {interface}")
+
+        for line in out.splitlines():
+            in_use, ssid = line.split(":", 1)
+
+            if in_use == "*":
+                return ssid or None
+
+    def _get_ping() -> str:
+        out = run_process("ping -c 1 -w 1 8.8.8.8")
+
+        for token in out.split():
+            if token.startswith("time="):
+                return f"{int(float(token[5:]))} ms"
 
         return "N/A"
 
-    def get_ping() -> str:
-        try:
-            out = subprocess.check_output(
-                ["ping", "-c", "1", "-w", "1", "8.8.8.8"],
-                stderr=subprocess.DEVNULL,
-                text=True,
-            )
+    connection = _nm_active_connection()
 
-            if m := re.search(r"time=([\d.]+) ms", out):
-                return f"{int(float(m.group(1)))} ms"
-        except Exception:
-            pass
+    ssid = (
+        run_process(f"nmcli -g 802-11-wireless.ssid connection show {connection}")
+        if connection
+        else _nm_active_ssid()
+    )
 
-        return "N/A"
+    wifi_text = f"{connection or ssid or 'N/A'}, {_get_ping()}"
 
     return {
         "name": "id_wifi",
-        "full_text": wrap_name("WLS", f"{get_ssid()} at {get_ping()}"),
+        "full_text": wrap_name("WLS", wifi_text),
     }
 
 
@@ -145,9 +148,11 @@ def pretty_ethernet() -> dict:
             ipv4 = a.address
             break
 
+    ethernet_text = f"{ethernet} ({ipv4})"
+
     return {
         "name": "id_ethernet",
-        "full_text": wrap_name("ETH", f"{ethernet} ({ipv4})"),
+        "full_text": wrap_name("ETH", ethernet_text),
     }
 
 
@@ -162,11 +167,13 @@ def pretty_cpu() -> dict:
             current_temp = int(temps[key][0].current)
             break
 
-    temp_text = f"{current_temp}°C" if current_temp is not None else "N/A"
+    current_temp = f"{current_temp}°C" if current_temp is not None else "N/A"
+
+    cpu_text = f"{percent:.2f}% at {current_temp}"
 
     return {
         "name": "id_cpu",
-        "full_text": wrap_name("CPU", f"{percent:.2f}% at {temp_text}"),
+        "full_text": wrap_name("CPU", cpu_text),
     }
 
 
@@ -177,9 +184,11 @@ def pretty_memory() -> str:
     total = format_bytes(memory.total)
     percent = f"{(memory.used / memory.total * 100):.2f}"
 
+    memory_text = f"{used} of {total} ({percent}%)"
+
     return {
         "name": "id_memory",
-        "full_text": wrap_name("RAM", f"{used} of {total} ({percent}%)"),
+        "full_text": wrap_name("RAM", memory_text),
     }
 
 
@@ -189,21 +198,19 @@ def pretty_battery() -> str:
     if not battery:
         return
 
-    left = None
     percent = "Full" if int(battery.percent) == 100 else f"{battery.percent:.2f}%"
-    plugged = "Plugged"
+
+    battery_text = f"{percent} (Plugged)"
 
     if not battery.power_plugged:
-        plugged = "Not Plugged"
-
         if int(battery.secsleft / 3600) == 0:
-            left = f"int(battery.secsleft / 60)m left, {percent}"
+            battery_text = f"{int(battery.secsleft / 60)}m left, {percent}"
         else:
-            left = f"{int(battery.secsleft / 3600)}h left, {percent}"
+            battery_text = f"{int(battery.secsleft / 3600)}h left, {percent}"
 
     return {
         "name": "id_battery",
-        "full_text": wrap_name("BAT", f"{left or percent} ({plugged})"),
+        "full_text": wrap_name("BAT", battery_text),
     }
 
 
@@ -222,27 +229,24 @@ def pretty_uptime() -> str:
     parts.append(f"{hours} hours") if hours > 0 else None
     parts.append(f"{minutes} minutes") if minutes > 0 else None
 
+    uptime_text = ", ".join(parts) or "Waking..."
+
     return {
         "name": "id_uptime",
-        "full_text": wrap_name("UP", f"{', '.join(parts) or 'Waking...'}"),
+        "full_text": wrap_name("UP", uptime_text),
     }
 
 
 def pretty_keyboard() -> dict:
-    try:
-        out = subprocess.check_output(
-            ["setxkbmap", "-print", "-verbose", "10"],
-            stderr=subprocess.DEVNULL,
-            text=True,
-        )
+    out = run_process("setxkbmap -print -verbose 10")
 
-        if m := re.search(r"layout:(?: +)?([a-z]+)", out):
-            return {
-                "name": "id_keyboard",
-                "full_text": wrap_name("KB", f"{m.group(1).upper() or 'N/A'}"),
-            }
-    except Exception:
-        pass
+    if match := re.search(r"layout:(?: +)?([a-z]+)", out):
+        keyboard_text = match.group(1).upper() or "N/A"
+
+        return {
+            "name": "id_keyboard",
+            "full_text": wrap_name("KB", keyboard_text),
+        }
 
 
 def pretty_now() -> dict:
@@ -252,9 +256,12 @@ def pretty_now() -> dict:
         # Use default locale.
         pass
 
-    now = datetime.datetime.now().strftime(DATETIME_FORMAT)
+    now_text = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
-    return {"name": "id_time", "full_text": f"<big>{now}</big> "}
+    return {
+        "name": "id_time",
+        "full_text": now_text,
+    }
 
 
 def get_slow_blocks() -> list[dict]:

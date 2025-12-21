@@ -18,6 +18,8 @@ o.clipboard = "unnamedplus"
 -- Show a confirmation dialog instead of failing when exiting when unsaved changes.
 o.confirm = true
 
+o.cmdheight = 0
+
 -- Highlight the line where the cursor is and the column at "colorcolumn" characters of
 -- length, with the latter being a tuple of integers without spaces, like "X,Y,Z".
 o.cursorline = true
