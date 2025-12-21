@@ -224,12 +224,12 @@ def pretty_uptime() -> str:
 
     parts = []
 
-    parts.append(f"{weeks} weeks") if weeks > 0 else None
-    parts.append(f"{days} days") if days > 0 else None
-    parts.append(f"{hours} hours") if hours > 0 else None
-    parts.append(f"{minutes} minutes") if minutes > 0 else None
+    parts.append(f"{weeks}w") if weeks > 0 else None
+    parts.append(f"{days}d") if days > 0 else None
+    parts.append(f"{hours}h") if hours > 0 else None
+    parts.append(f"{minutes}m") if minutes > 0 else None
 
-    uptime_text = ", ".join(parts) or "Waking..."
+    uptime_text = " ".join(parts) or "Waking..."
 
     return {
         "name": "id_uptime",
