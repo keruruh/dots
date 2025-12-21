@@ -34,7 +34,7 @@ def get_wallpaper_color() -> str:
     if wallpaper_color:
         return wallpaper_color
 
-    wallpapers = glob.glob(os.path.expanduser("~/.papes/_current.*"))
+    wallpapers = glob.glob(os.path.expanduser("~/.papes/.current.*"))
     default_color = "#ffffff"
 
     if not wallpapers:
@@ -87,29 +87,30 @@ def pretty_wifi() -> dict:
     def _nm_active_connection() -> str | None:
         out = run_process("nmcli -t -f DEVICE,NAME connection show --active")
 
-        for line in out.splitlines():
-            device, name = line.split(":", 1)
+        if out:
+            for line in out.splitlines():
+                device, name = line.split(":", 1)
 
-            if name and device == interface:
-                return name
+                if name and device == interface:
+                    return name
 
     def _nm_active_ssid() -> str | None:
         out = run_process(f"nmcli -t -f IN-USE,SSID dev wifi list ifname {interface}")
 
-        for line in out.splitlines():
-            in_use, ssid = line.split(":", 1)
+        if out:
+            for line in out.splitlines():
+                in_use, ssid = line.split(":", 1)
 
-            if in_use == "*":
-                return ssid or None
+                if in_use == "*":
+                    return ssid
 
-    def _get_ping() -> str:
-        out = run_process("ping -c 1 -w 1 8.8.8.8")
+    def _get_ping() -> str | None:
+        out = run_process("ping -c 1 8.8.8.8")
 
-        for token in out.split():
-            if token.startswith("time="):
-                return f"{int(float(token[5:]))} ms"
-
-        return "N/A"
+        if out:
+            for token in out.split():
+                if token.startswith("time="):
+                    return f"{int(float(token[5:]))}ms"
 
     connection = _nm_active_connection()
 

@@ -16,9 +16,11 @@ return {
         modes = {
             current_buffer = {
                 mode = "diagnostics",
+
                 filter = {
                     any = {
                         buf = 0,
+
                         {
                             severity = vim.diagnostic.severity.ERROR,
 

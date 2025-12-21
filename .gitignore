@@ -37,8 +37,11 @@ telemetry/**
 !.papes/
 !.papes/**
 
-.papes/**/_current.*
-.papes/**/_default.*
+.papes/**/.current.*
+.papes/**/.default.*
 
 !.scripts/
 !.scripts/**
+
+!.layouts/
+!.layouts/**

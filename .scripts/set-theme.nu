@@ -10,7 +10,7 @@ def "wallpaper reload" [image: string] {
 
     i3-msg --quiet restart
 
-    # Reload Nu's theme in the current shell.
+    # Reload Nu's colorscheme in the current shell.
     # Other shells will need to be manually restarted.
     #
     # I don't know if there is a better way to do this, or if I'm missing something,
@@ -21,11 +21,11 @@ def "wallpaper reload" [image: string] {
 
 def "wallpaper restore" [] {
     # Default to the current wallpaper.
-    mut pape = glob ($nu.home-path | path join ".papes/_current.*")
+    mut pape = glob ($nu.home-path | path join ".papes/.current.*")
 
     if ($pape | is-empty) {
         # If there is no current wallpaper, use the "default" one.
-        $pape = glob ($nu.home-path | path join ".papes/_default.*")
+        $pape = glob ($nu.home-path | path join ".papes/.default.*")
 
         if ($pape | is-empty) {
             print "Set a default wallpaper first."
@@ -40,14 +40,14 @@ def "wallpaper restore" [] {
 def "wallpaper set" [image: string] {
     let dir = $nu.home-path | path join ".papes"
 
-    # In the extremely rare case that there is more than a single "_current.*" file,
+    # In the extremely rare case that there is more than a single ".current.*" file,
     # delete all of them to prevent weird stuff from happening.
-    glob ($dir | path join "_current.*") | each { |old|
+    glob ($dir | path join ".current.*") | each { |old|
         rm --force $old
     }
 
     let extension = ($image | path parse | get extension)
-    let current = $dir | path join $"_current.($extension)"
+    let current = $dir | path join $".current.($extension)"
 
     cp $image $current
 
@@ -71,7 +71,7 @@ def main [
         $restore
         or (
             ($image | is-not-empty)
-            and (($image | path parse).stem =~ "(_current|_default)")
+            and (($image | path parse).stem =~ "(.current|.default)")
         )
     ) {
         wallpaper restore
@@ -86,7 +86,7 @@ def main [
 
         loop {
             let random_pape = $papes
-                | where ($it | path parse).stem !~ "(_current|_default)"
+                | where ($it | path parse).stem !~ "(.current|.default)"
                 | shuffle
                 | first
 
@@ -96,7 +96,7 @@ def main [
             }
 
             let current_pape = $papes
-                | where ($it | path parse).stem =~ "_current"
+                | where ($it | path parse).stem =~ ".current"
                 | first
 
             if (
