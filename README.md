@@ -1,13 +1,16 @@
 # dots
 
-Feel free to clone and use however you want but note that some things might not work by
-default on your system. PRs and issues (if any) will be ignored because this isn't
-supposed to be an *all-in-one* *work-for-all* config setup. If you are interested in
-something like that, you might enjoy [Omarchy](https://omarchy.org/).
+These are my personal dotfiles. Feel free to clone them and use whatever you want, but
+don’t expect everything to work out of the box on your system.
+
+I’m not aiming for this to be a polished, universal setup, so PRs and issues will be
+ignored. This repo is just my own config. If you’re looking for something more
+plug-and-play, you might enjoy [Omarchy](https://omarchy.org/).
 
 ## Setup
 
 - AUR Helper: `paru`
+- Compositor: `picom`
 - Display Manager: `ly`
 - File Explorer: `yazi`
 - Lock Screen: `i3lock` with a custom script

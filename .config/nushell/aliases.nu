@@ -26,4 +26,4 @@ alias orphans = pacman --query --unrequired --deps
 
 alias f = fzf --preview "bat --color always --style numbers {}"
 alias rf = rm --force --recursive --permanent
-
+alias cat = bat --theme gruvbox-dark

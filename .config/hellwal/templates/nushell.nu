@@ -22,16 +22,16 @@ let base16_theme = {
     datetime: $c14
     filesize: $c13
     row_index: $c12
-    bool: $c8
+    bool: $c9
     int: $c11
-    duration: $c8
-    range: $c8
-    float: $c8
+    duration: $c9
+    range: $c9
+    float: $c9
     string: $c4
-    nothing: $c8
-    binary: $c8
-    cell-path: $c8
-    hints: dark_gray
+    nothing: $c9
+    binary: $c9
+    cell-path: $c9
+    hints: $c9
 
     shape_garbage: { fg: $c7 bg: $c8 attr: b }
     shape_bool: $c13

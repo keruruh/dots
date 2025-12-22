@@ -24,12 +24,15 @@ def main [
     --foreign (-f)
     --all (-a)
 ] {
-    let mode = (
-        if $all { "all" }
-        else if $native { "native" }
-        else if $foreign { "foreign" }
-        else { "all" }
-    )
+    let mode = if $all {
+        "all"
+    } else if $native {
+        "native"
+    } else if $foreign {
+        "foreign"
+    } else {
+        "all"
+    }
 
     let native_pkgs = pacman --query --quiet --explicit --native | lines
     let foreign_pkgs = pacman --query --quiet --explicit --foreign | lines

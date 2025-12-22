@@ -22,10 +22,7 @@ return {
 
     opts = {
         format_on_save = function(buffer)
-            local disable_filetypes = {
-                c = true,
-                cpp = true,
-            }
+            local disable_filetypes = {}
 
             if disable_filetypes[vim.bo[buffer].filetype] then
                 return nil
@@ -38,6 +35,7 @@ return {
         end,
 
         formatters_by_ft = {
+            c = { "clang-format" },
             lua = { "stylua" },
             python = {
                 "ruff_fix",

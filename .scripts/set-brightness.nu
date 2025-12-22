@@ -10,7 +10,7 @@ def main [
     }
 
     if $restore {
-        brightnessctl --quiet --restore
+        brightnessctl --quiet --restore | ignore
         return
     }
 

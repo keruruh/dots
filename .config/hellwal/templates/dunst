@@ -21,7 +21,8 @@
     frame_width = 2
     frame_color = "#%% color4.hex %%"
 
-    gap_size = 15
+    # This setting requires a compositor to work properly.
+    gap_size = 14
 
     sort = update
 
