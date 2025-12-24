@@ -1,5 +1,4 @@
 include ~/.config/i3/modules/keys.conf
-include ~/.config/i3/modules/modes.conf
 include ~/.config/i3/modules/rules.conf
 include ~/.config/i3/modules/styles.conf
 

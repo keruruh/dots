@@ -261,7 +261,7 @@ def pretty_now() -> dict:
 
     return {
         "name": "id_time",
-        "full_text": now_text,
+        "full_text": f"{now_text} ",
     }
 
 

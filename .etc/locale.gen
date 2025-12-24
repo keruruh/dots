@@ -1,5 +1,4 @@
-# Remember to run "locale-gen" after modifying this file to re-generate the
-# system locales.
+# Run "locale-gen" after modifying this file to re-generate the system locales.
 
 en_US.UTF-8 UTF-8
 ja_JP.UTF-8 UTF-8

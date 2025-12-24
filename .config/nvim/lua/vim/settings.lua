@@ -1,5 +1,3 @@
--- NOTE: Plugin settings are defined in each plugin's Lua file.
-
 -- See https://neovim.io/doc/user/options.html or use ":help <command>" for more
 -- information of all available options.
 

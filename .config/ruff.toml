@@ -1,4 +1,2 @@
-# References: https://docs.astral.sh/ruff/
-
 [format]
 docstring-code-format = true

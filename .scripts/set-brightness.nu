@@ -4,11 +4,6 @@ def main [
     --value (-v): string
     --restore (-r)
 ] {
-    if ($value | is-empty) and (not $restore) {
-        print "Rerun with --help to see the available flags."
-        return
-    }
-
     if $restore {
         brightnessctl --quiet --restore | ignore
         return

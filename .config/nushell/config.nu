@@ -16,6 +16,7 @@ $env.config.edit_mode = "vi"
 $env.config.buffer_editor = $env.EDITOR
 
 $env.config.table = {
+    mode: compact
     show_empty: false
     trim: {
         methodology: "truncating"

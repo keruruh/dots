@@ -1,5 +1,3 @@
-# References: https://yazi-rs.github.io/docs/configuration/overview
-
 [mgr]
 linemode = "time_and_size"
 

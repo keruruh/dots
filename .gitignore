@@ -20,6 +20,7 @@ telemetry/**
 !.config/
 !.config/**
 
+.config/btop
 .config/dconf
 .config/discord
 .config/keepassxc
