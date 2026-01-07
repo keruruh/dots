@@ -5,7 +5,7 @@ def main [] {
 
     rm --force $screen
 
-    flameshot full --path $screen
+    flameshot full --path $screen out+err> /dev/null
     mogrify -scale 10% -blur 0x2.5 -resize 1000% -colorspace gray $screen
 
     i3lock --ignore-empty-password --tiling --image $screen

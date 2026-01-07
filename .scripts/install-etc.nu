@@ -5,7 +5,7 @@ def main [
     --logout (-x)
 ] {
     if (whoami) != "root" {
-        print "Rerun the script with sudo."
+        print "Rerun the script as sudo."
         return
     }
 

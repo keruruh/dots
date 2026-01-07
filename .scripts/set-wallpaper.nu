@@ -4,12 +4,15 @@ const PAPES_DIR = $nu.home-path | path join ".papes"
 
 def "wallpaper reload" [image: string] {
     feh --no-fehbg --bg-scale $image
-    killall dunst
     hellwal --quiet --image $image
 
     (kitten @ set-colors
         --all
         --configured ($nu.home-path | path join ".cache/hellwal/kitty.conf"))
+
+    if (pgrep dunst | is-not-empty) {
+        pkill dunst
+    }
 
     i3-msg --quiet restart
 
@@ -17,14 +20,14 @@ def "wallpaper reload" [image: string] {
     # Other shells will need to be manually restarted.
     #
     # I don't know if there is a better way to do this, or if I'm missing something,
-    # since I've tried using Kitty's remote control to source "$nu.config-path" in all
-    # Kitty instances but the results are very ugly.
+    # since I've tried using Kitty's remote control to source `$nu.config-path` in all
+    # Kitty instances but the results were very ugly.
     exec nu
 }
 
 def "wallpaper set" [image: string] {
-    # In the extremely rare case that there is more than a single ".current.*" file,
-    # delete all of them to prevent weird stuff from happening.
+    # In the extremely rare case that there is more than a single `.current.*` file,
+    # delete all of them to prevent weird stuff from breaking the script.
     glob ($PAPES_DIR | path join ".current.*") | each { |old|
         rm --force $old
     }
@@ -85,7 +88,7 @@ def "wallpaper restore" [] {
         }
     }
 
-    # The result is a list of a single path-like element, hence the "| get 0".
+    # The result is a list of a single path-like element, hence the `| get 0`.
     wallpaper reload ($pape | get 0)
 }
 
@@ -105,6 +108,6 @@ def main [
     } else if $random {
         wallpaper random
     } else {
-        print "Invalid usage. Rerun with --help to see all the available flags."
+        print "Invalid usage. Rerun with `--help` to see the available flags."
     }
 }

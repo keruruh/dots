@@ -2,14 +2,12 @@ include ~/.config/i3/modules/keys.conf
 include ~/.config/i3/modules/rules.conf
 include ~/.config/i3/modules/styles.conf
 
+# Restore current wallpaper and brightness value.
 exec --no-startup-id ~/.scripts/set-wallpaper.nu --restore
+exec --no-startup-id ~/.scripts/set-brightness.nu --restore
 
 # Set keyboard key repetition rate.
 exec_always --no-startup-id xset r rate 200 30
-
-# Lock the screen after 30 minutes of inactivity.
-exec_always --no-startup-id xset dpms 0 0 1800
-exec_always --no-startup-id xss-lock ~/.config/i3/scripts/i3lock.nu
 
 # Launch other services.
 exec_always --no-startup-id dunst -config ~/.cache/hellwal/dunst
